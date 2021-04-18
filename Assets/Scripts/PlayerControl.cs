@@ -82,7 +82,7 @@ public class PlayerControl : MonoBehaviour
 
         if (isGrounded)
         {
-            float velocityRatio = vel.x / maxXVelocity; // calulating the Velocity for moving and jumping
+            float velocityRatio = vel.x / maxXVelocity; // calulating the Velocity for moving towards its jumping
             acceleration = maxAcceleration * (1 - velocityRatio);
 
             vel.x += acceleration * Time.fixedDeltaTime;

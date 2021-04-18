@@ -1,17 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class UIController : MonoBehaviour
+public class ParalexBG : MonoBehaviour
 {
+    [SerializeField] float depth = 1;
+
     PlayerControl player;
-    Text distanceText;
 
     private void Awake()
     {
         player = GameObject.Find("Player").GetComponent<PlayerControl>();
-        distanceText = GameObject.Find("DistanceText").GetComponent<Text>();
     }
 
     // Start is called before the first frame update
@@ -21,9 +20,16 @@ public class UIController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        int distance = Mathf.FloorToInt(player.distance);
-        distanceText.text = distance + " m";
+        float realVelocity = player.vel.x / depth;
+        Vector2 pos = transform.position;
+
+        pos.x -= realVelocity * Time.fixedDeltaTime;
+
+        if (pos.x <= -21)
+            pos.x = 26;
+
+        transform.position = pos;
     }
 }
