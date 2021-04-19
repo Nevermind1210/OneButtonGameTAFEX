@@ -11,7 +11,7 @@ public class PlayerControl : MonoBehaviour
     public float distance = 0;
     public float acceleration = 10; // defining speed
     public float jumpVelocity = 20; // defining how HIGH the jump
-    public float groundHeight = 10; // defining the height for basic ground dectection
+    public float groundHeight; // defining the height for basic ground dectection
     public bool isGrounded = false; // Ground Detection.
 
     public bool isHoldingButton = false; // for checking if the player is well holding a button
@@ -71,11 +71,21 @@ public class PlayerControl : MonoBehaviour
                 vel.y += gravity * Time.fixedDeltaTime;
             }
 
-            if(pos.y <= groundHeight)
+            Vector2 rayOrigin = new Vector2(pos.x + 0.7f, pos.y);
+            Vector2 rayDirection = Vector2.up;
+            float rayDistance = vel.y * Time.fixedDeltaTime;
+            RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
+            if (hit2D.collider != null)
             {
-                pos.y = groundHeight;
-                isGrounded = true;
+                Ground ground = hit2D.collider.GetComponent<Ground>();
+                if(ground != null)
+                {
+                    groundHeight = ground.groundHeight;
+                    pos.y = groundHeight;
+                    isGrounded = true;
+                }
             }
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.red);
         }
 
         distance += vel.x * Time.fixedDeltaTime;
@@ -90,7 +100,18 @@ public class PlayerControl : MonoBehaviour
             {
                 vel.x = maxXVelocity;
             }
+
+            Vector2 rayOrigin = new Vector2(pos.x - 0.7f, pos.y);
+            Vector2 rayDirection = Vector2.up;
+            float rayDistance = vel.y * Time.fixedDeltaTime;
+            RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
+            if (hit2D.collider == null)
+            {
+                isGrounded = false;
+            }
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.yellow);
         }
+
 
 
         transform.position = pos;
