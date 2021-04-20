@@ -691,7 +691,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1754371783}
   - component: {fileID: 1754371782}
-  - component: {fileID: 1754371781}
   - component: {fileID: 1754371780}
   m_Layer: 0
   m_Name: Ground
@@ -726,19 +725,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 16.989836, y: 7.16815}
   m_EdgeRadius: 0
---- !u!114 &1754371781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754371779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcf19739bc5f5cf448a4953e8373f2bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  depth: 1
 --- !u!114 &1754371782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,7 +737,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b83c1a29ed248ea41a06f62784ee50c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundHeight: 0
+  groundHeight: 5.9
+  groundRight: 0
+  screenRight: 0
 --- !u!4 &1754371783
 Transform:
   m_ObjectHideFlags: 0
@@ -901,10 +889,11 @@ MonoBehaviour:
   distance: 0
   acceleration: 10
   jumpVelocity: 50
-  groundHeight: 50
+  groundHeight: 0
   isGrounded: 0
   isHoldingButton: 0
   maxHoldButtonTime: 0.4
+  holdButtonCap: 0.4
   holdJumpTimer: 0
   pixelPerfectJump: 3
 --- !u!212 &1814726692

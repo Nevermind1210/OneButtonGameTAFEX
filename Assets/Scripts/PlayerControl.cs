@@ -16,6 +16,7 @@ public class PlayerControl : MonoBehaviour
 
     public bool isHoldingButton = false; // for checking if the player is well holding a button
     public float maxHoldButtonTime = 0.4f; // the time that the player is allowed to hold it if reached regardless if player is holding it will drop and reset.
+    public float holdButtonCap = 0.4f;
     public float holdJumpTimer = 0.0f; // self explanatory.
 
     public float pixelPerfectJump = 1; // for the feeling of visual feedback the help that the player visually KNOWS it can jump and do it perfectly!
@@ -82,6 +83,7 @@ public class PlayerControl : MonoBehaviour
                 {
                     groundHeight = ground.groundHeight;
                     pos.y = groundHeight;
+                    vel.y = 0;
                     isGrounded = true;
                 }
             }
@@ -94,6 +96,7 @@ public class PlayerControl : MonoBehaviour
         {
             float velocityRatio = vel.x / maxXVelocity; // calulating the Velocity for moving towards its jumping
             acceleration = maxAcceleration * (1 - velocityRatio);
+            maxHoldButtonTime = holdButtonCap * velocityRatio; // this essentially brings is when player is slow is small jumps and player is fast well HUGE jumps!
 
             vel.x += acceleration * Time.fixedDeltaTime;
             if (vel.x >= maxXVelocity)
