@@ -9,7 +9,7 @@ public class Ground : MonoBehaviour
     public float groundHeight;
     public float groundRight;
     public float screenRight;
-    BoxCollider2D collider;
+    new BoxCollider2D collider;
 
     bool didGenerateGround = false; 
 
@@ -18,13 +18,13 @@ public class Ground : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<PlayerControl>(); //finding the player with the script
 
         collider = GetComponent<BoxCollider2D>();    
-        groundHeight = transform.position.y + (collider.size.y / 2);
-        screenRight = Camera.main.transform.position.x * 2;
+        groundHeight = transform.position.y + collider.size.y;
+        screenRight = Camera.main.transform.position.x;
     }
 
     void Update()
     {
-        
+       
     }
 
     private void FixedUpdate()
@@ -32,7 +32,7 @@ public class Ground : MonoBehaviour
         Vector2 pos = transform.position;
         pos.x -= player.vel.x * Time.fixedDeltaTime;
 
-        groundRight = transform.position.x + (collider.size.x / 2);
+        groundRight = transform.position.x + collider.size.x;
 
         if (groundRight < 0)
         {

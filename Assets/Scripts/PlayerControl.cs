@@ -112,7 +112,7 @@ public class PlayerControl : MonoBehaviour
             {
                 isGrounded = false;
             }
-            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.yellow);
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
         }
 
 
