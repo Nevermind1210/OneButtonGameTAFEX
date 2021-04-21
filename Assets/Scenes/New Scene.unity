@@ -882,7 +882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07d90b38501dfb64393644b3e9123275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -50
+  gravity: -500
   vel: {x: 0, y: 0}
   maxXVelocity: 100
   maxAcceleration: 10
@@ -891,6 +891,7 @@ MonoBehaviour:
   jumpVelocity: 50
   groundHeight: 0
   isGrounded: 0
+  isJumping: 0
   isHoldingButton: 0
   maxHoldButtonTime: 0.4
   holdButtonCap: 0.4

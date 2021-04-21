@@ -13,6 +13,7 @@ public class PlayerControl : MonoBehaviour
     public float jumpVelocity = 20; // defining how HIGH the jump
     public float groundHeight; // defining the height for basic ground dectection
     public bool isGrounded = false; // Ground Detection.
+    public bool isJumping = false;
 
     public bool isHoldingButton = false; // for checking if the player is well holding a button
     public float maxHoldButtonTime = 0.4f; // the time that the player is allowed to hold it if reached regardless if player is holding it will drop and reset.
@@ -33,14 +34,21 @@ public class PlayerControl : MonoBehaviour
         Vector2 pos = transform.position; // defining position
         float groundDist = Mathf.Abs(pos.y - groundHeight); // taking the position and finding the ground for pixelperfect jumps!
 
-        if(isGrounded || groundDist <= pixelPerfectJump)
+        if(!isGrounded && isJumping)
         {
-            if(Input.GetKeyDown(KeyCode.Space))
+            isJumping = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+             if (isGrounded) //|| groundDist <= pixelPerfectJump)
             {
-                isGrounded = false;
+            
+                //isGrounded = false;
                 vel.y = jumpVelocity; // taking the value
                 isHoldingButton = true;
                 holdJumpTimer = 0; // resets every time to allow the next jump after landing
+                isJumping = true;
             }
         }
 
@@ -53,7 +61,37 @@ public class PlayerControl : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 pos = transform.position;
+        
+        Vector2 rayOrigin = gameObject.transform.position; //new Vector2(pos.x + 0.7f, pos.y);
+        Vector2 rayDirection = Vector2.down;
+        float rayDistance = gameObject.GetComponent<Renderer>().bounds.extents.y + 0.01f;//vel.y * Time.fixedDeltaTime;
+        RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
+        if (hit2D.collider != null)
+        {
+            Ground ground = hit2D.collider.GetComponent<Ground>();
+            if (ground != null)
+            {
+                if (!isJumping)
+                {
+                    groundHeight = hit2D.collider.bounds.max.y;
+                    //groundHeight = ground.groundHeight;
+                    pos.y = groundHeight + gameObject.GetComponent<Renderer>().bounds.extents.y;
+                    vel.y = 0;
+                }
+                isGrounded = true;
+            }
+            else
+            {
+                isGrounded = false;
+            }
+        }
+        else
+        {
+            isGrounded = false;
+        }
+        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.red);
 
+        pos.y += vel.y * Time.fixedDeltaTime;
 
         if (!isGrounded)
         {
@@ -66,28 +104,10 @@ public class PlayerControl : MonoBehaviour
                 }
             }
 
-            pos.y += vel.y * Time.fixedDeltaTime;
             if(!isHoldingButton)
             {
                 vel.y += gravity * Time.fixedDeltaTime;
             }
-
-            Vector2 rayOrigin = new Vector2(pos.x + 0.7f, pos.y);
-            Vector2 rayDirection = Vector2.up;
-            float rayDistance = vel.y * Time.fixedDeltaTime;
-            RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
-            if (hit2D.collider != null)
-            {
-                Ground ground = hit2D.collider.GetComponent<Ground>();
-                if(ground != null)
-                {
-                    groundHeight = ground.groundHeight;
-                    pos.y = groundHeight;
-                    vel.y = 0;
-                    isGrounded = true;
-                }
-            }
-            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.red);
         }
 
         distance += vel.x * Time.fixedDeltaTime;
@@ -104,7 +124,7 @@ public class PlayerControl : MonoBehaviour
                 vel.x = maxXVelocity;
             }
 
-            Vector2 rayOrigin = new Vector2(pos.x - 0.7f, pos.y);
+            /*Vector2 rayOrigin = new Vector2(pos.x - 0.7f, pos.y);
             Vector2 rayDirection = Vector2.up;
             float rayDistance = vel.y * Time.fixedDeltaTime;
             RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
@@ -112,7 +132,7 @@ public class PlayerControl : MonoBehaviour
             {
                 isGrounded = false;
             }
-            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);*/
         }
 
 
