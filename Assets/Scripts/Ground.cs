@@ -57,8 +57,18 @@ public class Ground : MonoBehaviour
         GameObject go = Instantiate(gameObject); // we repeat the gameObject when bounds are found
         BoxCollider2D goCollider = go.GetComponent<BoxCollider2D>();  // get the componenet
         Vector2 pos; // set the position
-        pos.x = screenRight + 30; // set the screen offset value
-        pos.y = transform.position.y; // the y
+
+        float h1 = player.jumpVelocity * player.holdJumpTimer; // we use this first calculation to for the possible time that the player can hold jump for.
+        float t = player.jumpVelocity / player.gravity; // 
+        float h2 = player.jumpVelocity * t + (0.5f * (player.gravity * (t * t))); // the natural jump arc when just simply pressing jump to account for gravity
+        float maxJumpHeight = h1 + h2;
+        float maxY = player.transform.position.y + maxJumpHeight; // highest point for the next object but still possible to land on.
+        maxY *= 0.7f;
+        float minY = 1;
+        float actualY = Random.Range(minY, maxY) - goCollider.size.y / 2;
+
+        pos.y = actualY; // the y
+        pos.x = screenRight + 17; // set the screen offset value
         go.transform.position = pos; // and set the value of pos.
     }
 }

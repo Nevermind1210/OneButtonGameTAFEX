@@ -41,7 +41,7 @@ public class PlayerControl : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-             if (isGrounded) //|| groundDist <= pixelPerfectJump)
+             if (isGrounded || groundDist <= pixelPerfectJump)
             {
             
                 //isGrounded = false;
