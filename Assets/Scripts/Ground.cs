@@ -18,21 +18,22 @@ public class Ground : MonoBehaviour
         player = GameObject.Find("Player").GetComponent<PlayerControl>(); //finding the player with the script
 
         collider = GetComponent<BoxCollider2D>();    
-        groundHeight = transform.position.y + collider.size.y;
-        screenRight = Camera.main.transform.position.x;
+        groundHeight = transform.position.y + (collider.size.y / 2);
+        screenRight = transform.position.x + (collider.size.x * .5f);
     }
 
     void Update()
     {
        
+
     }
 
     private void FixedUpdate()
     {
-        Vector2 pos = transform.position;
+        Vector2 pos = transform.position; // this shows the effect of movement for the player essentially auto running
         pos.x -= player.vel.x * Time.fixedDeltaTime;
 
-        groundRight = transform.position.x + collider.size.x;
+        groundRight = transform.position.x + (collider.size.x * .75f);
 
         if (groundRight < 0)
         {
@@ -44,8 +45,8 @@ public class Ground : MonoBehaviour
         {
             if (groundRight < screenRight) // if the bounds of right ground and screen right is the less
             {
-                didGenerateGround = true; 
-                generateGround(); // invoke function
+                didGenerateGround = true;
+                generateGround(); // invoke the function
             }
         }
 
@@ -59,13 +60,13 @@ public class Ground : MonoBehaviour
         Vector2 pos; // set the position
 
         float h1 = player.jumpVelocity * player.holdJumpTimer; // we use this first calculation to for the possible time that the player can hold jump for.
-        float t = player.jumpVelocity / player.gravity; // 
-        float h2 = player.jumpVelocity * t + (0.5f * (player.gravity * (t * t))); // the natural jump arc when just simply pressing jump to account for gravity
+        float t = player.jumpVelocity / -player.gravity; // 
+        float h2 = player.jumpVelocity * t + (0.5f * (-player.gravity * (t * t))); // the natural jump arc when just simply pressing jump to account for gravity
         float maxJumpHeight = h1 + h2;
-        float maxY = player.transform.position.y + maxJumpHeight; // highest point for the next object but still possible to land on.
+        float maxY = /*player.transform.position.y +*/ maxJumpHeight; // highest point for the next object but still possible to land on.
         maxY *= 0.7f;
         float minY = 1;
-        float actualY = Random.Range(minY, maxY) - goCollider.size.y / 2;
+        float actualY = Random.Range(minY, maxY)/* - goCollider.size.y / 2*/;
 
         pos.y = actualY; // the y
         pos.x = screenRight + 17; // set the screen offset value
