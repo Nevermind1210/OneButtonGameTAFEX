@@ -19,7 +19,7 @@ public class Ground : MonoBehaviour
 
         collider = GetComponent<BoxCollider2D>();    
         groundHeight = transform.position.y + (collider.size.y / 2);
-        screenRight = transform.position.x + (collider.size.x * .5f);
+        screenRight = transform.position.x + (collider.size.x * .42f);
     }
 
     void Update()
@@ -64,12 +64,12 @@ public class Ground : MonoBehaviour
         float h2 = player.jumpVelocity * t + (0.5f * (-player.gravity * (t * t))); // the natural jump arc when just simply pressing jump to account for gravity
         float maxJumpHeight = h1 + h2;
         float maxY = /*player.transform.position.y +*/ maxJumpHeight; // highest point for the next object but still possible to land on.
-        maxY *= 0.7f;
+        maxY *= 0.7f; // Clamping it
         float minY = 1;
         float actualY = Random.Range(minY, maxY)/* - goCollider.size.y / 2*/;
 
         pos.y = actualY; // the y
-        pos.x = screenRight + 17; // set the screen offset value
+        pos.x = screenRight + 7; // set the screen offset value
         go.transform.position = pos; // and set the value of pos.
     }
 }

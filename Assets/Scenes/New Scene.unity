@@ -887,8 +887,8 @@ MonoBehaviour:
   maxXVelocity: 100
   maxAcceleration: 10
   distance: 0
-  acceleration: 10
-  jumpVelocity: 50
+  acceleration: 15
+  jumpVelocity: 75
   groundHeight: 0
   isGrounded: 0
   isJumping: 0
