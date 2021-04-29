@@ -882,21 +882,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07d90b38501dfb64393644b3e9123275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -500
+  gravity: -400
   vel: {x: 0, y: 0}
   maxXVelocity: 100
   maxAcceleration: 10
   distance: 0
-  acceleration: 15
-  jumpVelocity: 75
-  groundHeight: 0
+  acceleration: 10
+  jumpVelocity: 50
+  groundHeight: 10
   isGrounded: 0
   isJumping: 0
   isHoldingButton: 0
-  maxHoldButtonTime: 0.4
+  maxHoldButtonTime: 0
   holdButtonCap: 0.4
   holdJumpTimer: 0
-  pixelPerfectJump: 3
+  pixelPerfectJump: 1
 --- !u!212 &1814726692
 SpriteRenderer:
   m_ObjectHideFlags: 0
