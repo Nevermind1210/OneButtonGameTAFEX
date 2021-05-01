@@ -18,14 +18,14 @@ public class Ground : MonoBehaviour
     {
         player = GameObject.Find("Player").GetComponent<PlayerControl>(); //finding the player with the script
 
-        collider = GetComponent<BoxCollider2D>();    
+        collider = GetComponent<BoxCollider2D>();
         groundHeight = transform.position.y + (collider.size.y / 2);
-        screenRight = transform.position.x + (collider.size.x * .42f);
+        screenRight = transform.position.x + (collider.size.x * .5f);
     }
 
     void Update()
     {
-       
+
 
     }
 
@@ -42,7 +42,7 @@ public class Ground : MonoBehaviour
             return;
         }
 
-        if(!didGenerateGround) 
+        if(!didGenerateGround)
         {
             if (groundRight < screenRight) // if the bounds of right ground and screen right is the less
             {
@@ -61,29 +61,16 @@ public class Ground : MonoBehaviour
         Vector2 pos; // set the position
 
         float h1 = player.jumpVelocity * player.holdJumpTimer; // we use this first calculation to for the possible time that the player can hold jump for.
-        float t = player.jumpVelocity / -player.gravity; // 
+        float t = player.jumpVelocity / -player.gravity; //
         float h2 = player.jumpVelocity * t + (0.5f * (-player.gravity * (t * t))); // the natural jump arc when just simply pressing jump to account for gravity
         float maxJumpHeight = h1 + h2;
-        float maxY = maxJumpHeight + 0.5f; // highest point for the next object but still possible to land on.
-        maxY += groundHeight; 
+        float maxY = /*player.transform.position.y +*/ maxJumpHeight; // highest point for the next object but still possible to land on.
+        maxY *= 0.7f;
         float minY = 1;
-        float actualY = Random.Range(minY, maxY) + (goCollider.size.y / 2); // finds a space within the world 
+        float actualY = Random.Range(minY, maxY) + (goCollider.size.y / 2); // finds a space within the world
 
-        pos.y = actualY - goCollider.size.y / 2; // the y
-        if (pos.y > 8.7f)
-            pos.y = 8.7f;
-
-        float t1 = t + player.maxHoldButtonTime;
-        float t2 = Mathf.Sqrt((2.0f * (maxY - actualY)) / -player.gravity);
-        float totalTime = t1 + t2;
-        float maxX = totalTime * player.vel.x;
-        maxX *= 0.5f; // more clamping
-        maxX += groundRight;
-        float minX = screenRight + 5;
-        float actualX = Random.Range(minX, maxX);
-
-
-        pos.x = actutalX + goCollider.size.x / .42f; // set the screen offset value
+        pos.y = actualY; // the y
+        pos.x = screenRight + 17; // set the screen offset value
         go.transform.position = pos; // and set the value of pos.
 
         Ground goGround = go.GetComponent<Ground>();
