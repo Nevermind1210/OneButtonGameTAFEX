@@ -21,6 +21,7 @@ public class PlayerControl : MonoBehaviour
     public float holdJumpTimer = 0.0f; // self explanatory.
 
     public float pixelPerfectJump = 1; // for the feeling of visual feedback the help that the player visually KNOWS it can jump and do it perfectly!
+    public bool isDead = false;
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +63,16 @@ public class PlayerControl : MonoBehaviour
     {
         Vector2 pos = transform.position;
         
+        if(isDead == true)
+        {
+            return;
+        }
+
+        if(pos.y < -20)
+        {
+            isDead = true;
+        }
+
         Vector2 rayOrigin = gameObject.transform.position; //new Vector2(pos.x + 0.7f, pos.y);
         Vector2 rayDirection = Vector2.down;
         float rayDistance = gameObject.GetComponent<Renderer>().bounds.extents.y + 0.01f;//vel.y * Time.fixedDeltaTime;
@@ -73,10 +84,13 @@ public class PlayerControl : MonoBehaviour
             {
                 if (!isJumping)
                 {
-                    groundHeight = hit2D.collider.bounds.max.y;
-                    //groundHeight = ground.groundHeight;
-                    pos.y = groundHeight + gameObject.GetComponent<Renderer>().bounds.extents.y;
-                    vel.y = 0;
+                    if (pos.y >= ground.groundHeight)
+                    {
+                        groundHeight = hit2D.collider.bounds.max.y;
+                        //groundHeight = ground.groundHeight;
+                        pos.y = groundHeight + gameObject.GetComponent<Renderer>().bounds.extents.y;
+                        vel.y = 0;
+                    }
                 }
                 isGrounded = true;
             }
@@ -107,6 +121,20 @@ public class PlayerControl : MonoBehaviour
             if(!isHoldingButton)
             {
                 vel.y += gravity * Time.fixedDeltaTime;
+            }
+
+            Vector2 wallOrigin = new Vector2(pos.x, pos.y);
+            RaycastHit2D wallHit = Physics2D.Raycast(wallOrigin, Vector2.right, vel.x * Time.fixedDeltaTime);
+            if(wallHit.collider != null)
+            {
+                Ground ground = wallHit.collider.GetComponent<Ground>();
+                if(ground != null)
+                {
+                    if(pos.y < ground.groundHeight)
+                    {
+                        vel.x = 0;
+                    }
+                }
             }
         }
 
