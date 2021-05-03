@@ -47,7 +47,7 @@ public class UIController : MonoBehaviour
 
     public void Quit()
     {
-        SceneManager.GetSceneByBuildIndex(-1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1); 
     }
 
     public void Retry()
