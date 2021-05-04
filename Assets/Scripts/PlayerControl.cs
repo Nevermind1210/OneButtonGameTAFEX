@@ -4,133 +4,109 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    public float gravity; // gravity is well gravity! Weight.
-    public Vector2 vel; // Velocity the speed of a thing (player)
-    public float maxXVelocity = 100; // Defining the max of a direction
-    public float maxAcceleration = 10; // Defining the max Speed of player
-    public float distance = 0;
-    public float acceleration = 10; // defining speed
-    public float jumpVelocity = 20; // defining how HIGH the jump
-    public float groundHeight; // defining the height for basic ground dectection
-    public bool isGrounded = false; // Ground Detection.
-    public bool isJumping = false;
 
-    public bool isHoldingButton = false; // for checking if the player is well holding a button
-    public float maxHoldButtonTime = 0.4f; // the time that the player is allowed to hold it if reached regardless if player is holding it will drop and reset.
+    public float gravity; // Well the gravity of the player this affects jump velocity and such
+    public Vector2 vel; // The velocity....
+    public float maxXVelocity = 100; // the max it can go
+    public float maxAcceleration = 10; // the max FAST it can go
+    public float acceleration = 10; // 
+    public float distance = 0; // as it says
+    public float jumpVelocity = 20; // how hard you can jump
+    public float groundHeight = 10; // the height of the player to the ground.
+    public bool isGrounded = false; // basic ground detection.
+
+    public bool IsHoldingButton = false; // this is pretty much what it saids.
+    public float maxHoldButtonTime = 0.4f; // the time that the player is allowed to hold it reached regardless if player is holding it will drop and reset
     public float holdButtonCap = 0.4f;
-    public float holdJumpTimer = 0.0f; // self explanatory.
+    public float holdJumpTimer = 0.0f;
 
     public float pixelPerfectJump = 1; // for the feeling of visual feedback the help that the player visually KNOWS it can jump and do it perfectly!
+
     public bool isDead = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update() 
+    void Update()
     {
         Vector2 pos = transform.position; // defining position
-        float groundDist = Mathf.Abs(pos.y - groundHeight); // taking the position and finding the ground for pixelperfect jumps!
+        float groundDistance = Mathf.Abs(pos.y - groundHeight); // taking the position and finding the ground for pixelPerfect jumps
 
-        if(!isGrounded && isJumping)
+        if (isGrounded || groundDistance <= pixelPerfectJump)
         {
-            isJumping = false;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-             if (isGrounded || groundDist <= pixelPerfectJump)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-            
-                //isGrounded = false;
-                vel.y = jumpVelocity; // taking the value
-                isHoldingButton = true;
-                holdJumpTimer = 0; // resets every time to allow the next jump after landing
-                isJumping = true;
+                isGrounded = false;
+                vel.y = jumpVelocity;
+                IsHoldingButton = true;
+                holdJumpTimer = 0;
             }
         }
 
-        if(Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space))
         {
-            isHoldingButton = false;
+            IsHoldingButton = false;
         }
     }
 
     private void FixedUpdate()
     {
-        Vector2 pos = transform.position;
-        
-        if(isDead == true)
+        if (isDead) // well its a dead checker!
         {
             return;
         }
 
-        if(pos.y < -20)
+        Vector2 pos = transform.position;
+
+        if (pos.y < -20) // if so you are dead!
         {
             isDead = true;
         }
 
-        Vector2 rayOrigin = gameObject.transform.position; //new Vector2(pos.x + 0.7f, pos.y);
-        Vector2 rayDirection = Vector2.down;
-        float rayDistance = gameObject.GetComponent<Renderer>().bounds.extents.y + 0.01f;//vel.y * Time.fixedDeltaTime;
-        RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
-        if (hit2D.collider != null)
+        if (!isGrounded) // this nested if statement is essentally checking gravity and making sure everything stays in values so you can't jump infinity.
         {
-            Ground ground = hit2D.collider.GetComponent<Ground>();
-            if (ground != null)
-            {
-                if (!isJumping)
-                {
-                    if (pos.y >= ground.groundHeight)
-                    {
-                        groundHeight = hit2D.collider.bounds.max.y;
-                        //groundHeight = ground.groundHeight;
-                        pos.y = groundHeight + gameObject.GetComponent<Renderer>().bounds.extents.y;
-                        vel.y = 0;
-                    }
-                }
-                isGrounded = true;
-            }
-            else
-            {
-                isGrounded = false;
-            }
-        }
-        else
-        {
-            isGrounded = false;
-        }
-        Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.red);
-
-        pos.y += vel.y * Time.fixedDeltaTime;
-
-        if (!isGrounded)
-        {
-            if(isHoldingButton)
+            if (IsHoldingButton)
             {
                 holdJumpTimer += Time.fixedDeltaTime;
-                if(holdJumpTimer >= maxHoldButtonTime)
+                if (holdJumpTimer >= maxHoldButtonTime)
                 {
-                    isHoldingButton = false;
+                    IsHoldingButton = false;
                 }
             }
 
-            if(!isHoldingButton)
+            pos.y += vel.y * Time.fixedDeltaTime;
+            if (!IsHoldingButton)
             {
                 vel.y += gravity * Time.fixedDeltaTime;
             }
 
-            Vector2 wallOrigin = new Vector2(pos.x, pos.y);
-            RaycastHit2D wallHit = Physics2D.Raycast(wallOrigin, Vector2.right, vel.x * Time.fixedDeltaTime);
-            if(wallHit.collider != null)
+            Vector2 rayOrigin = new Vector2(pos.x + 0.7f, pos.y);// creating a new rayOrigin
+            Vector2 rayDirection = Vector2.up; 
+            float rayDistance = vel.y * Time.fixedDeltaTime; 
+            RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
+            if (hit2D.collider != null)
+            {
+                Ground ground = hit2D.collider.GetComponent<Ground>();
+                if (ground != null) // to check if you are still on the ground 
+                {
+                    if (pos.y >= ground.groundHeight) // and if so check again then calculate.
+                    {
+                        groundHeight = ground.groundHeight;
+                        pos.y = groundHeight;
+                        vel.y = 0;
+                        isGrounded = true;
+                    }
+                }
+            }
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.red);
+
+
+            Vector2 wallOrigin = new Vector2(pos.x, pos.y); // in the event the building that comes are taller than you then plop dead.
+            Vector2 wallDir = Vector2.right;
+            RaycastHit2D wallHit = Physics2D.Raycast(wallOrigin, wallDir, vel.x * Time.fixedDeltaTime);
+            if (wallHit.collider != null) 
             {
                 Ground ground = wallHit.collider.GetComponent<Ground>();
-                if(ground != null)
+                if (ground != null)
                 {
-                    if(pos.y < ground.groundHeight)
+                    if (pos.y < ground.groundHeight)
                     {
                         vel.x = 0;
                     }
@@ -140,19 +116,19 @@ public class PlayerControl : MonoBehaviour
 
         distance += vel.x * Time.fixedDeltaTime;
 
-        if (isGrounded)
+        if (isGrounded) // GRAVITY CHECK AGAIN WOOOOOOOO
         {
-            float velocityRatio = vel.x / maxXVelocity; // calulating the Velocity for moving towards its jumping
-            acceleration = maxAcceleration * (1 - velocityRatio);
-            maxHoldButtonTime = holdButtonCap * velocityRatio; // this essentially brings is when player is slow is small jumps and player is fast well HUGE jumps!
+            float velocityRatio = vel.x / maxXVelocity; // WE DIVIDE THIS
+            acceleration = maxAcceleration * (1 - velocityRatio); // MAKE IT ONE OFF
+            maxHoldButtonTime = holdButtonCap * velocityRatio; // NOW WE CAN HOLD LONGER
 
-            vel.x += acceleration * Time.fixedDeltaTime;
-            if (vel.x >= maxXVelocity)
+            vel.x += acceleration * Time.fixedDeltaTime; // MAKE SURE GRAVITY CHECK ITSELF
+            if (vel.x >= maxXVelocity) // OH GOD TOO MUCH
             {
-                vel.x = maxXVelocity;
+                vel.x = maxXVelocity; // NOW ITS OKAY NORMALIZE IT
             }
 
-            /*Vector2 rayOrigin = new Vector2(pos.x - 0.7f, pos.y);
+            Vector2 rayOrigin = new Vector2(pos.x - 0.7f, pos.y); // man 3 raycasts seems excessive but really nessesary for this physics I am doing. probably better solutions but it works so hey.
             Vector2 rayDirection = Vector2.up;
             float rayDistance = vel.y * Time.fixedDeltaTime;
             RaycastHit2D hit2D = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance);
@@ -160,11 +136,9 @@ public class PlayerControl : MonoBehaviour
             {
                 isGrounded = false;
             }
-            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.magenta);*/
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.yellow);
+
         }
-
-
-
         transform.position = pos;
     }
 }
